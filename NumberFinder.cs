@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PadawansTask6
 {
@@ -11,106 +12,69 @@ namespace PadawansTask6
                 throw new ArgumentException();
             }
 
-            int size = 15;
-            int[] digitOfNumbers = new int[size];
-            int[] temp = new int[size];
-
-            for(int i = 0; i < temp.Length; i++)
+            int count = 0;
+            while (number > 0)
             {
-                digitOfNumbers[i] = 0;
-                temp[i] = 0; 
+                number /= 10;
+                count++;
             }
 
-            DigitsOfNumber(digitOfNumbers, number); 
+            int[] digits = new int[count];
 
-            if(IncreaseOfArray(digitOfNumbers))
+            int m = count - 1;
+            while (number > 0)
+            {
+                digits[m] = number % 10;
+                number /= 10;
+                m--;
+            }
+
+            int term = 0;
+            for (int i = digits.Length - 1; i >= 1; i--)
+            {
+                if (digits[i] > digits[i - 1])
+                {
+                    int minInd = i - 1; 
+                    for(int j = i - 1; j < digits.Length; j++)
+                    {
+                        if(digits[j] > digits[i - 1])
+                        {
+                            minInd = j; 
+                        }
+                    }
+                    int temp = digits[minInd];
+                    digits[minInd] = digits[i - 1];
+                    digits[i - 1] = temp;
+                    term = i - 1; 
+                    break; 
+                }
+            }
+
+            Array.Sort(digits, term + 1, digits.Length - term);
+            //for (int i = term + 1; i < digits.Length - 1; i++)
+            //{
+            //    for (int j = i + 1; j < digits.Length; j++)
+            //    {
+            //        if (digits[i] > digits[j])
+            //        {
+            //            int temp = digits[i];
+            //            digits[i] = digits[j];
+            //            digits[j] = temp;
+            //        }
+            //    }
+            //}
+
+            int result = 0;
+            for (int i = digits.Length - 1; i >= 0; i--)
+            {
+                result += digits[i] * (int)Math.Pow(10, digits.Length - i - 1); 
+            }
+
+            if(result == number)
             {
                 return null; 
             }
-
-            int count = number + 1;
-
-            while (number != int.MaxValue)
-            {
-                DigitsOfNumber(temp, count); 
-                if(Equals(temp, digitOfNumbers))
-                {
-                    return count; 
-                }
-
-                count++; 
-            }
-
-            return null; 
-        }
-
-        public static bool IncreaseOfArray(int[] source)
-        {
-            for (int i = 1; i < source.Length; i++)
-            {
-                if (source[i] > source[i - 1])
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public static void DigitsOfNumber(int[] source, int number)
-        {
-            int digit = 0;
-            int i = 0;
-
-            while (number > 0)
-            {
-                digit = number % 10;
-                source[i] = digit;
-                number /= 10;
-                i++;
-            }
-        }
-
-        public static void BubleSort(int[] array)
-        {
-            if (array == null)
-            {
-                throw new ArgumentNullException(nameof(array));
-            }
-
-            for (int i = 0; i < array.Length; i++)
-            {
-                for (int j = 0; j < array.Length - i - 1; j++)
-                {
-                    if (array[j] > array[j + 1])
-                    {
-                        int temp = array[j];
-                        array[j] = array[j + 1];
-                        array[j + 1] = temp;
-                    }
-                }
-            }
-        }
-
-        public static bool Equals(int[] source, int[] array)
-        {
-            if (source.Length != array.Length)
-            {
-                return false;
-            }
-
-            BubleSort(source);
-            BubleSort(array);
-
-            for (int i = 0; i < source.Length; i++)
-            {
-                if (source[i] != array[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return result; 
         }
     }
 }
